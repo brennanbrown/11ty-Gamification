@@ -1,0 +1,19 @@
+---
+layout: layout.njk
+title: Tags
+---
+
+<h1 class="text-3xl font-semibold mb-6">Tags</h1>
+
+<ul class="flex flex-wrap gap-3">
+  {% for item in collections.tagsList %}
+  {# item: { tag, count } #}
+  {% set bg = item.tag | tagColor %}
+  {% set text = bg | tagTextColor %}
+  <li>
+    <a href="/tags/{{ item.tag }}/" class="px-3 py-1 rounded-full border" style="background: {{ bg }}; color: {{ text }}; border-color: rgba(0,0,0,0.06)">
+      #{{ item.tag }} <span class="opacity-80">({{ item.count }})</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

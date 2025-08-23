@@ -1,0 +1,47 @@
+---
+pagination:
+  data: activity.months
+  size: 1
+  alias: month
+permalink: "/calendar/{{ month }}/"
+layout: layout.njk
+---
+
+{% set cal = activity.monthCalendars[month] %}
+<h1 class="text-2xl font-semibold mb-2">{{ cal.calendarMonth }}</h1>
+<div class="mb-3 text-sm flex items-center gap-3">
+  <a href="/calendar/{{ cal.prev }}/" class="underline">← Prev</a>
+  <a href="/calendar/" class="underline">All months</a>
+  <a href="/calendar/{{ cal.next }}/" class="underline">Next →</a>
+</div>
+
+<div class="mt-2 flex flex-col items-center">
+  <div class="grid" style="grid-template-columns: repeat(7, 28px); gap: 6px;">
+    {% set weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] %}
+    {% for w in weekdays %}
+      <div class="text-xs opacity-60 text-center">{{ w }}</div>
+    {% endfor %}
+    {% for week in cal.calendarWeeks %}
+      {% for day in week %}
+        {% set c = day.count %}
+        {% set opacity = 0.12 %}
+        {% if c == 1 %}
+          {% set opacity = 0.35 %}
+        {% elif c == 2 %}
+          {% set opacity = 0.55 %}
+        {% elif c > 2 %}
+          {% set opacity = 0.75 %}
+        {% endif %}
+        {% set bg = 'rgba(16,185,129,' ~ opacity ~ ')' %}
+        {% set muted = '' %}
+        {% if not day.isCurrentMonth %}{% set muted = 'opacity:0.35;' %}{% endif %}
+        <a href="/days/{{ day.date }}/"
+           aria-label="{{ day.date }}: {{ c }} posts"
+           class="flex items-center justify-center text-xs"
+           style="width:28px; height:28px; border-radius:6px; background: {{ bg }}; {{ muted }} color:#0f172a; text-decoration:none;">
+          {{ day.dayOfMonth }}
+        </a>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>

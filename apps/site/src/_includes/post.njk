@@ -1,0 +1,13 @@
+---
+layout: layout.njk
+---
+
+<article class="prose prose-slate max-w-none">
+  <h1>{{ title }}</h1>
+  {% if date %}
+  <p class="text-sm opacity-70">{{ date | date("yyyy-LL-dd") }}</p>
+  {% endif %}
+  {% set tags = tags %}
+  {% include "components/tag-pills.njk" %}
+  {{ content | safe }}
+</article>

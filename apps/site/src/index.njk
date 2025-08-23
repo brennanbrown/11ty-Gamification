@@ -1,0 +1,236 @@
+---
+layout: layout.njk
+title: IndieGarden — Dashboard
+---
+
+<style>
+  /* Visible focus outline for keyboard users */
+  .focus-ring:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 2px; }
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    html:focus-within { scroll-behavior: auto; }
+  }
+</style>
+
+<h1 class="text-3xl font-semibold mb-2">Welcome back 👋</h1>
+<p class="opacity-80 mb-6">Make writing feel like play. Your garden grows with every post 🌱</p>
+
+<section>
+  <h2>Stats</h2>
+  {% if analyzer and analyzer.totals %}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+    <div class="card" style="border-left:4px solid #22c55e"><div class="text-sm opacity-70">Posts</div><div class="text-2xl font-semibold">{{ analyzer.totals.posts }}</div></div>
+    <div class="card" style="border-left:4px solid #06b6d4"><div class="text-sm opacity-70">Words</div><div class="text-2xl font-semibold">{{ analyzer.totals.words | string | replace(',', '') }}</div></div>
+    <div class="card" style="border-left:4px solid #f59e0b"><div class="text-sm opacity-70">Reading Minutes</div><div class="text-2xl font-semibold">{{ analyzer.totals.minutes }}</div></div>
+  </div>
+  <h3 class="text-xl font-semibold mt-6 mb-2">Per Post</h3>
+  <details data-collapsible="posts" class="block">
+    <summary class="cursor-pointer select-none py-2">Show Per-Post Stats</summary>
+    <div class="mt-2">
+      <table class="w-full text-left" style="border:1px solid #e5e7eb; border-radius:0.5rem; overflow:hidden;">
+        <thead class="opacity-70 text-sm" style="background:#f8fafc;">
+          <tr><th class="py-2 px-3">Title</th><th class="py-2 px-3">Words</th><th class="py-2 px-3">Minutes</th></tr>
+        </thead>
+        <tbody>
+          {% for post in collections.all %}
+            {% if post.url and post.url.startsWith('/posts/') %}
+            {% set s = analyzer.perPost[post.url] %}
+            <tr class="border-t" style="border-color:#e5e7eb;">
+              <td class="py-2 px-3"><a href="{{ post.url }}">{{ post.data.title }}</a></td>
+              <td class="py-2 px-3">{{ s.words }}</td>
+              <td class="py-2 px-3">{{ s.minutes }}</td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  {% else %}
+  <p>Coming soon.</p>
+  {% endif %}
+</section>
+
+<section class="mt-10">
+  <h2 class="text-xl font-semibold mb-3"><a href="/badges/" class="underline">Badges</a></h2>
+  {% if badges and badges.earned %}
+    <div class="grid gap-4 md:grid-cols-3">
+      <div>
+        <h3 class="font-medium mb-1">Streak</h3>
+        <div class="text-sm opacity-70 mb-1">Current streak: {{ activity and activity.streak or 0 }} days</div>
+        <div>
+          {% for t in badges.tiers.streak %}
+            {% if t.earned %}
+              <span title="{{ t.name }} ({{ t.threshold }} days)" class="inline-block text-3xl mr-2{% if t.recent %} recent{% endif %}" {% if t.recent %}style="text-shadow:0 0 6px rgba(245,158,11,0.8)"{% endif %}>{{ t.emoji }}</span>
+            {% else %}
+              <span title="Locked: {{ t.name }} ({{ t.threshold }} days)" class="inline-block align-[0.2em] mr-2 text-slate-400" style="font-size:1.25rem">○</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% set current = activity and activity.streak or 0 %}
+        {% set nextT = badges.next.streak or 0 %}
+        {% set denom = nextT %}
+        {% if denom <= 0 %}{% set denom = 1 %}{% endif %}
+        {% set pct = (current / denom) * 100 %}
+        <div class="mt-2" data-prog="streak" aria-label="streak-progress" style="height:8px; background:#e5e7eb; border-radius:6px; overflow:hidden;">
+          <div style="width: {{ pct | round(0, 'floor') }}%; height:100%; background:#22c55e;"></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-medium mb-1">Spirit</h3>
+        <div class="text-sm opacity-70 mb-1">Total active days: {{ badges.totalActiveDays or 0 }} / {{ (badges.next.spirit or 1) }}</div>
+        <div>
+          {% for t in badges.tiers.spirit %}
+            {% if t.earned %}
+              <span title="{{ t.name }} ({{ t.threshold }} days total)" class="inline-block text-3xl mr-2{% if t.recent %} recent{% endif %}" style="filter: grayscale(100%) brightness(0.8);{% if t.recent %} text-shadow:0 0 6px rgba(100,116,139,0.8){% endif %}">{{ t.emoji }}</span>
+            {% else %}
+              <span title="Locked: {{ t.name }} ({{ t.threshold }} days total)" class="inline-block align-[0.2em] mr-2 text-slate-400" style="font-size:1.25rem">○</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% set currentS = badges.totalActiveDays or 0 %}
+        {% set nextS = badges.next.spirit or 0 %}
+        {% set denomS = nextS %}
+        {% if denomS <= 0 %}{% set denomS = 1 %}{% endif %}
+        {% set pctS = (currentS / denomS) * 100 %}
+        <div class="mt-1" data-prog="spirit" aria-label="spirit-progress" style="height:8px; background:#e5e7eb; border-radius:6px; overflow:hidden;">
+          <div style="width: {{ pctS | round(0, 'floor') }}%; height:100%; background:#64748b;"></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-medium mb-1">Word Count</h3>
+        <div class="text-sm opacity-70 mb-1">Total words: {{ analyzer and analyzer.totals and analyzer.totals.words or 0 }} / {{ (badges.next.wordcount or 1) }}</div>
+        <div>
+          {% for t in badges.tiers.wordcount %}
+            {% if t.earned %}
+              <span title="{{ t.name }} ({{ t.threshold }} words)" class="inline-block text-3xl mr-2">{{ t.emoji }}</span>
+            {% else %}
+              <span title="Locked: {{ t.name }} ({{ t.threshold }} words)" class="inline-block align-[0.2em] mr-2 text-slate-400" style="font-size:1.25rem">○</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% set words = analyzer and analyzer.totals and analyzer.totals.words or 0 %}
+        {% set nextW = badges.next.wordcount or 0 %}
+        {% set denomW = nextW %}
+        {% if denomW <= 0 %}{% set denomW = 1 %}{% endif %}
+        {% set pctW = (words / denomW) * 100 %}
+        <div class="mt-1" data-prog="wordcount" aria-label="word-progress" style="height:8px; background:#e5e7eb; border-radius:6px; overflow:hidden;">
+          <div style="width: {{ pctW | round(0, 'floor') }}%; height:100%; background:#f59e0b;"></div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p>No badges yet.</p>
+  {% endif %}
+
+  {% if badges and badges.behavior %}
+  <div class="mt-6" data-section="behavior">
+    <h3 class="font-medium mb-2">Behavior</h3>
+    <div class="grid gap-4 sm:grid-cols-2" role="list">
+      {% for b in badges.behavior %}
+        <div class="flex items-center gap-3" role="listitem">
+          {% if b.earned %}
+            <span class="inline-flex items-center justify-center" aria-hidden="true" data-behavior="{{ b.key }}" style="width:2.25rem; height:2.25rem; font-size:1.5rem; line-height:1;">{{ b.emoji }}</span>
+          {% else %}
+            <span class="inline-flex items-center justify-center text-slate-400" aria-hidden="true" data-behavior="{{ b.key }}" style="width:2.25rem; height:2.25rem; font-size:1.5rem; line-height:1;">○</span>
+          {% endif %}
+          <div>
+            <div class="font-medium">{{ b.name }}</div>
+            <div class="text-sm opacity-70">{% if b.earned %}Unlocked{% else %}Locked{% endif %}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+<section class="mt-10 mb-24" data-section="badge-ideas">
+  <h2 class="text-xl font-semibold mb-2 text-center">Badge Ideas</h2>
+  <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto justify-items-center">
+    {% for i in ideas %}
+      {% set locked = not i.earned %}
+      <div class="flex flex-col items-center gap-0.5 {% if locked %}opacity-70{% endif %}" style="{% if locked %}filter: grayscale(1);{% endif %}">
+        <div class="inline-flex items-center justify-center rounded-md {% if locked %}text-slate-400{% endif %}"
+             data-badge-idea="{{ i.key }}" title="{{ i.title }}" aria-label="{{ i['aria-label'] }}"
+             style="width:2rem; height:2rem; font-size:1.1rem; {% if locked %}background:#f1f5f9; color:#0f172a;{% else %}background:#ecfeff; color:#0f172a;{% endif %}">
+          <span aria-hidden="true">{{ i.emoji }}</span>
+        </div>
+        <span class="text-[10px] opacity-70">{{ i.label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2 class="text-2xl font-bold text-center mt-12 md:mt-16 mb-2">Heatmap</h2>
+  {% if activity and activity.calendarWeeks %}
+  <div class="mt-3 flex flex-col items-center" data-heatmap="calendar">
+    <div class="text-sm opacity-80 mb-2">{{ activity.calendarMonth }}</div>
+    <div class="grid" style="grid-template-columns: repeat(7, var(--cell-size)); gap: 6px;">
+      {% set weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] %}
+      {% for w in weekdays %}
+        <div class="text-xs opacity-60 text-center">{{ w }}</div>
+      {% endfor %}
+      {% for week in activity.calendarWeeks %}
+        {% for day in week %}
+          {% set w = day.words or 0 %}
+          {% set bg = '#ffffff' %}
+          {% if w > 0 %}
+            {# Refined buckets: 1–99, 100–249, 250–499, 500–999, 1000+ #}
+            {% set opacity = 0.2 %}
+            {% if w >= 100 and w < 250 %}
+              {% set opacity = 0.35 %}
+            {% elif w >= 250 and w < 500 %}
+              {% set opacity = 0.5 %}
+            {% elif w >= 500 and w < 1000 %}
+              {% set opacity = 0.65 %}
+            {% elif w >= 1000 %}
+              {% set opacity = 0.8 %}
+            {% endif %}
+            {% set bg = 'rgba(16,185,129,' ~ opacity ~ ')' %}
+          {% endif %}
+          {% set muted = '' %}
+          {% if not day.isCurrentMonth %}{% set muted = 'opacity:0.35;' %}{% endif %}
+          <a href="/days/{{ day.date }}/" title="{{ day.date }}: {{ w }} words" class="flex items-center justify-center text-xs focus-ring" style="width:var(--cell-size); height:var(--cell-size); border-radius:6px; background: {{ bg }}; {{ muted }} color:#0f172a; text-decoration:none;">
+            {{ day.dayOfMonth }}
+          </a>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <div class="opacity-70 text-sm mt-2">Click a day to see posts • 0 words = white, more words = darker</div>
+    <div class="mt-2 text-xs opacity-80" data-heatmap-legend>
+      <div class="flex items-center gap-2 justify-center flex-wrap">
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background:#ffffff;border:1px solid #e5e7eb;"></span>
+          <span class="ml-1 hidden sm:inline">0</span>
+        </span>
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background: rgba(16,185,129,0.2);"></span>
+          <span class="ml-1 hidden sm:inline">1–99</span>
+        </span>
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background: rgba(16,185,129,0.35);"></span>
+          <span class="ml-1 hidden sm:inline">100–249</span>
+        </span>
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background: rgba(16,185,129,0.5);"></span>
+          <span class="ml-1 hidden sm:inline">250–499</span>
+        </span>
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background: rgba(16,185,129,0.65);"></span>
+          <span class="ml-1 hidden sm:inline">500–999</span>
+        </span>
+        <span class="inline-flex items-center">
+          <span aria-hidden="true" style="display:inline-block;width:0.9rem;height:0.9rem;border-radius:4px;background: rgba(16,185,129,0.8);"></span>
+          <span class="ml-1 hidden sm:inline">1000+</span>
+        </span>
+      </div>
+    </div>
+    <div class="mt-3 text-sm"><a href="/calendar/" class="underline focus-ring">View full calendar</a></div>
+  </div>
+  {% else %}
+  <p>Coming soon.</p>
+  {% endif %}
+</section>

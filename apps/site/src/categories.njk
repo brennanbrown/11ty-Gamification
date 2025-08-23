@@ -1,0 +1,17 @@
+---
+layout: layout.njk
+title: Categories
+---
+
+<h1 class="text-3xl font-semibold mb-6">Categories</h1>
+
+<ul class="flex flex-wrap gap-3">
+  {% for item in collections.categoriesList %}
+  {# item: { category, count } #}
+  <li>
+    <a href="/categories/{{ item.category }}/" class="px-3 py-1 rounded-full border" style="border-color: rgba(0,0,0,0.06)">
+      {{ item.category }} <span class="opacity-80">({{ item.count }})</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

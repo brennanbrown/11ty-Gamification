@@ -1,0 +1,83 @@
+---
+layout: layout.njk
+title: Badges
+---
+
+<style>
+  /* Page-specific badge sizing and presentation */
+  .badge-page .badge { font-size: 3.8rem; display: inline-block; line-height: 1; }
+  /* Reinforce grayscale for spirit badges on this page */
+  .badge-page .badge.spirit { filter: grayscale(100%) brightness(0.8) contrast(1.1); opacity: 0.9; }
+  /* Section spacing */
+  .badge-section { margin-bottom: 2.5rem; }
+
+  /* Tooltip styling */
+  .badge-tip { position: relative; }
+  .badge-tipbox { position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, -8px); z-index: 40; background: #111827; color: #e5e7eb; border: 1px solid #374151; border-radius: 0.5rem; padding: 0.5rem 0.6rem; font-size: 0.9rem; max-width: 18rem; box-shadow: 0 6px 16px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: opacity .12s ease, transform .12s ease; white-space: nowrap; }
+  .badge-tipbox .name { font-weight: 600; }
+  .badge-tipbox .desc { opacity: 0.9; margin-left: 0.35rem; }
+  .badge-tip:hover .badge-tipbox,
+  .badge-tip:focus-within .badge-tipbox { opacity: 1; transform: translate(-50%, -12px); }
+</style>
+
+<h1 class="text-3xl font-semibold mb-4">Badges</h1>
+<p class="opacity-80 mb-6">Learn how to earn badges as you write. Tiers show your progress; locked tiers are placeholders.</p>
+
+<div class="badge-page">
+  <section class="badge-section">
+  <h2 class="text-xl font-semibold mb-2">Streak</h2>
+  <p class="mb-2">Earned by posting on consecutive days. Tiers: 3, 5, 10, 30, 100, 200, 365 days.</p>
+  <ul class="flex gap-4 flex-wrap">
+    {% for t in (badges and badges.tiers and badges.tiers.streak) or [] %}
+      {% set desc = "Post " + t.threshold + " consecutive days" %}
+      <li class="badge-tip">
+        <span class="badge" aria-label="{{ t.name }}" tabindex="0" role="img" data-badge-name="{{ t.name }}" data-badge-desc="{{ desc }}">{{ t.emoji }}</span>
+        <span class="badge-tipbox"><span class="name">{{ t.name }}</span><span class="desc">— {{ desc }}</span></span>
+      </li>
+    {% endfor %}
+  </ul>
+  </section>
+
+  <section class="badge-section">
+  <h2 class="text-xl font-semibold mb-2">Spirit (Total Active Days)</h2>
+  <p class="mb-2">Earned by posting on any day; counts unique active days over all time. Same tiers as Streak.</p>
+  <ul class="flex gap-4 flex-wrap">
+    {% for t in (badges and badges.tiers and badges.tiers.spirit) or [] %}
+      {% set desc = "Post on " + t.threshold + " days total" %}
+      <li class="badge-tip">
+        <span class="badge spirit" aria-label="{{ t.name }}" tabindex="0" role="img" data-badge-name="{{ t.name }}" data-badge-desc="{{ desc }}">{{ t.emoji }}</span>
+        <span class="badge-tipbox"><span class="name">{{ t.name }}</span><span class="desc">— {{ desc }}</span></span>
+      </li>
+    {% endfor %}
+  </ul>
+  </section>
+
+  <section class="badge-section">
+  <h2 class="text-xl font-semibold mb-2">Word Count</h2>
+  <p class="mb-2">Total words across all posts. Tiers: 750, 5k, 10k, 50k, 100k, 250k, 500k, 750k, 1M.</p>
+  <ul class="flex gap-4 flex-wrap">
+    {% for t in (badges and badges.tiers and badges.tiers.wordcount) or [] %}
+      {% set desc = "Reach " + t.threshold + " total words" %}
+      <li class="badge-tip">
+        <span class="badge" aria-label="{{ t.name }}" tabindex="0" role="img" data-badge-name="{{ t.name }}" data-badge-desc="{{ desc }}">{{ t.emoji }}</span>
+        <span class="badge-tipbox"><span class="name">{{ t.name }}</span><span class="desc">— {{ desc }}</span></span>
+      </li>
+    {% endfor %}
+  </ul>
+  </section>
+
+  <section class="badge-section">
+  <h2 class="text-xl font-semibold mb-2">Behavior</h2>
+  <p class="mb-2">Based on when you write. Early Bird: any post before 09:00 UTC today. Night Owl: any post at or after 22:00 UTC today.</p>
+  <ul class="flex gap-4 flex-wrap">
+    {% for b in (badges and badges.behavior) or [] %}
+      {% set desc %}{% if b.key == 'early-bird' %}Post before 09:00 UTC today{% else %}Post at or after 22:00 UTC today{% endif %}{% endset %}
+      <li class="badge-tip">
+        <span class="badge behavior" aria-label="{{ b.name }}" tabindex="0" role="img" data-badge-name="{{ b.name }}" data-badge-desc="{{ desc }}">{{ b.emoji }}</span>
+        <span class="badge-tipbox"><span class="name">{{ b.name }}</span><span class="desc">— {{ desc }}</span></span>
+      </li>
+    {% endfor %}
+  </ul>
+  </section>
+</div>
+

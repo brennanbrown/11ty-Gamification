@@ -1,0 +1,43 @@
+---
+layout: layout.njk
+title: Search
+---
+
+<h1 class="text-3xl font-semibold mb-6">Search</h1>
+
+<div class="mb-4">
+  <input id="q" type="search" placeholder="Search posts..." class="w-full border rounded px-3 py-2" />
+</div>
+<div id="results" class="space-y-4"></div>
+
+<script>
+(async function(){
+  const resEl = document.getElementById('results');
+  const qEl = document.getElementById('q');
+  const idx = await fetch('/search.json').then(r => r.json()).catch(() => []);
+
+  function render(items){
+    if(!items.length){ resEl.innerHTML = '<p class="opacity-70">No results.</p>'; return; }
+    resEl.innerHTML = items.map(i => `
+      <div class="card">
+        <h2 class="text-xl font-semibold"><a href="${i.url}">${i.title}</a></h2>
+        <p class="text-sm opacity-80">${(i.tags||[]).map(t=>`#${t}`).join(' ')}</p>
+        <p class="opacity-80">${i.excerpt}</p>
+      </div>
+    `).join('');
+  }
+
+  function matches(item, q){
+    const hay = `${item.title} ${(item.tags||[]).join(' ')} ${item.excerpt}`.toLowerCase();
+    return hay.includes(q.toLowerCase());
+  }
+
+  render(idx);
+  qEl.addEventListener('input', () => {
+    const q = qEl.value.trim();
+    if(!q) return render(idx);
+    const filtered = idx.filter(i => matches(i, q));
+    render(filtered);
+  });
+})();
+</script>

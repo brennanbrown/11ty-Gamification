@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utilities */
+.gradient-text { @apply bg-clip-text text-transparent; background-image: theme('backgroundImage.gradient-primary'); }
+.badge { @apply inline-block text-3xl m-1; }
+.badge.spirit { filter: grayscale(100%) brightness(0.7) contrast(1.2); opacity: 0.8; position: relative; }
+.badge.spirit::after { content: "👻"; position: absolute; font-size: 0.5em; top: -5px; right: -5px; z-index: 1; }

@@ -1,0 +1,15 @@
+---
+permalink: "/calendar/"
+layout: layout.njk
+---
+
+{% set months = activity.months %}
+{% set current = '' %}
+{% if months and months.length > 0 %}{% set current = months[months.length - 1] %}{% endif %}
+<h1 class="text-2xl font-semibold mb-3">Calendar</h1>
+{% if current %}
+  <p>Jump to current month:</p>
+  <p><a class="underline" href="/calendar/{{ current }}/">{{ activity.monthCalendars[current].calendarMonth }}</a></p>
+{% else %}
+  <p>No months available.</p>
+{% endif %}

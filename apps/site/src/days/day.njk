@@ -1,0 +1,23 @@
+---
+pagination:
+  data: activity.calendarDays
+  size: 1
+  alias: day
+eleventyComputed:
+  permalink: "/days/{{ day.date }}/"
+layout: layout.njk
+---
+
+<h1 class="text-2xl font-semibold mb-2">Posts on {{ day.date }}</h1>
+{% set posts = activity.postsByDay[day.date] or [] %}
+<p class="opacity-75 mb-4">{{ posts.length }} post{% if posts.length == 1 %}{% else %}s{% endif %} this day.</p>
+
+{% if posts and posts.length %}
+<ul class="list-disc ml-6">
+  {% for p in posts %}
+  <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No posts this day.</p>
+{% endif %}

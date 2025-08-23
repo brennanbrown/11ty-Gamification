@@ -1,0 +1,11 @@
+{% if tags and tags.length %}
+<ul class="flex flex-wrap gap-2" style="list-style: none; padding-left: 0; margin: 0;">
+  {% for t in tags %}
+    {% set bg = t | tagColor %}
+    {% set text = bg | tagTextColor %}
+    <li style="list-style: none;">
+      <a href="/tags/{{ t | lower }}/" class="px-2 py-0.5 rounded-full text-sm border" style="background: {{ bg }}; color: {{ text }}; border-color: rgba(0,0,0,0.06)">#{{ t | lower }}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}

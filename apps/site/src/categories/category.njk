@@ -1,0 +1,26 @@
+---
+layout: layout.njk
+pagination:
+  data: collections.categoriesList
+  size: 1
+  alias: categoryItem
+permalink: "/categories/{{ categoryItem.category }}/index.html"
+title: "{{ categoryItem.category }}"
+---
+
+<h1 class="text-3xl font-semibold mb-6">{{ categoryItem.category }}</h1>
+<p class="opacity-70 mb-4">{{ categoryItem.count }} post{% if categoryItem.count != 1 %}s{% endif %}</p>
+
+<ul class="space-y-6">
+  {% set posts = collections.categoryMap[categoryItem.category] %}
+  {% for post in posts %}
+  <li class="card">
+    <h2 class="text-xl font-semibold"><a href="{{ post.url }}">{{ post.data.title }}</a></h2>
+    {% if post.date %}
+    <p class="text-sm opacity-70">{{ post.date | date("yyyy-LL-dd") }}</p>
+    {% endif %}
+    {% set tags = post.data.tags %}
+    {% include "components/tag-pills.njk" %}
+  </li>
+  {% endfor %}
+</ul>
