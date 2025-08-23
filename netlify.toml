@@ -1,9 +1,9 @@
 [build]
   base = "apps/site"
   command = "npm run build"
-  publish = "apps/site/_site"
+  publish = "_site"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "20.18.0"
 
 # Redirects and headers can be added here later if needed
