@@ -1,0 +1,26 @@
+{
+  "name": "gamification-blog-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.base.json --noEmit",
+    "build": "echo \"Use per-package build scripts\"",
+    "lint": "eslint . --ext .js,.cjs,.mjs,.ts,.tsx --max-warnings=0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.2.5",
+    "typescript": "^5.5.4",
+    "vitest": "^1.6.0"
+  }
+}

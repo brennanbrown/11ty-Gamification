@@ -1,0 +1,53 @@
+# Node/TypeScript/Monorepo ignores
+node_modules/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+
+# Build outputs
+**/dist/
+**/build/
+
+# Eleventy
+apps/site/_site/
+**/.eleventy-cache/
+**/.cache/
+
+# Vite/Vitest
+**/.vite/
+*.tsbuildinfo
+
+# Lint caches
+.eslintcache
+.stylelintcache
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.iml
+
+# Netlify local state
+.netlify/
+
+# Parcel/Other tool caches
+.parcel-cache/
+.turbo/
+
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Misc
+*.swp
+*.swo
